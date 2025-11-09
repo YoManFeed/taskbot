@@ -1,0 +1,24 @@
+echo "[1/5] Резервируем старый sources.list (если есть)"
+if [ -f /etc/apt/sources.list ]; then
+    cp /etc/apt/sources.list /etc/apt/sources.list.bak
+fi
+
+echo "[2/5] Создаём новый /etc/apt/sources.list"
+cat > /etc/apt/sources.list <<'LIST'
+deb http://archive.ubuntu.com/ubuntu noble main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu noble-updates main restricted universe multiverse
+deb http://archive.ubuntu.com/ubuntu noble-backports main restricted universe multiverse
+deb http://security.ubuntu.com/ubuntu noble-security main restricted universe multiverse
+LIST
+
+echo "[3/5] Обновляем списки пакетов"
+apt-get clean
+rm -rf /var/lib/apt/lists/*
+apt-get update -y
+
+echo "[4/5] Устанавливаем pip и venv"
+apt-get install -y python3-venv python3-pip
+
+echo "[5/5] Обновляем pip и ставим python-dotenv"
+python3 -m pip install --upgrade pip
+python3 -m pip install python-dotenv
